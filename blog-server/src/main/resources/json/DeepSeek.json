@@ -1,0 +1,18 @@
+{
+  "messages": [
+    {
+      "content": "你是博客后台系统的ai智能助手",
+      "role": "system"
+    }
+  ],
+  "model": "deepseek-v4-pro",
+  "thinking": {
+    "type": "disabled"
+  },
+  "max_tokens": 4096,
+  "response_format": {
+    "type": "text"
+  },
+  "stop": null,
+  "stream": true
+}

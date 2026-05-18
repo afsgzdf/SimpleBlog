@@ -1,0 +1,17 @@
+sky:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    host: localhost
+    port: 3306
+    database: blog
+    username: root
+    password: 1234
+
+  redis:
+    port: 6379
+    host: localhost
+    connect-timeout: 1800000
+
+blog:
+  deepseek:
+    secret-key: 

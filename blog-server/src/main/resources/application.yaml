@@ -1,0 +1,83 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: SimpleBlog
+  profiles:
+    active: dev
+  jackson:
+    default-property-inclusion: non_null    #自动过滤null的消息
+    serialization:
+      write-dates-as-timestamps: true
+    deserialization:
+      fail-on-unknown-properties: false
+  main:
+    allow-circular-references: true
+  datasource:
+    url: jdbc:mysql://${sky.datasource.host}:${sky.datasource.port}/${sky.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&rewriteBatchedStatements=true&allowPublicKeyRetrieval=true
+    driver-class-name: ${sky.datasource.driver-class-name}
+    username: ${sky.datasource.username}
+    password: ${sky.datasource.password}
+
+  mail:
+    host: smtp.qq.com
+    username: 51446112@qq.com
+    password: rattbgmcspbebjac
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  data:
+    redis:
+      port: ${sky.redis.port}
+      host: ${sky.redis.host}
+      connect-timeout: ${sky.redis.connect-timeout}
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 2
+          max-wait: 100ms
+
+# springdoc-openapi项目配置
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+    enabled: true
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  packages-to-scan: com.serve.controller
+# knife4j的增强配置，不需要增强可以不配
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
+
+mybatis-plus:
+  global-config:
+    db-config:
+      id-type: auto          # 全局指定id类型为自增
+  mapper-locations: classpath*:/mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+  type-aliases-package: com.serve.po
+
+logging:
+  level:
+    com.serve.mapper: debug
+    root: info
+
+blog:
+  jwt:
+    token: Authorization
+    secret-key: myitblog
+    ttl: 7200000
+  deepseek:
+    url: https://api.deepseek.com/chat/completions
+    secret-key: ${blog.deepseek.secret-key}

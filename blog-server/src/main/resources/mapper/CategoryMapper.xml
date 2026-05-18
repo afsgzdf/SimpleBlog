@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.serve.mapper.CategoryMapper">
+    <select id="queryArticleByCategory" resultType="com.serve.vo.ArticleCategoryLinkVO">
+        select article.*, category.name as categoryName
+        from blog.category left outer join blog.article on category.id = article.category_id
+        <where>
+            and category.id = #{categoryId} and status = 1
+        </where>
+    </select>
+</mapper>
