@@ -21,8 +21,8 @@ spring:
 
   mail:
     host: smtp.qq.com
-    username:
-    password: rattbgmcspbebjac
+    username: ${spring.mail.password}
+    password: ${spring.mail.username}
     properties:
       mail:
         smtp:
