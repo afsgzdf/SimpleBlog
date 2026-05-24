@@ -1,5 +1,6 @@
 package com.serve.service.impl;
 
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.serve.mapper.ArticleLabelMapper;
 import com.serve.po.ArticleLabel;
@@ -8,6 +9,7 @@ import com.serve.service.ArticleLabelService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ArticleLabelServiceImpl extends ServiceImpl<ArticleLabelMapper, ArticleLabel> implements ArticleLabelService {
@@ -15,5 +17,14 @@ public class ArticleLabelServiceImpl extends ServiceImpl<ArticleLabelMapper, Art
     @Override
     public List<Label> queryLabelByArticleId(Long articleId) {
         return baseMapper.queryLabelByArticleId(articleId);
+    }
+
+    @Override
+    public List<Long> queryLabelIdByArticleId(Long articleId) {
+        List<ArticleLabel> list = lambdaQuery()
+                .eq(ArticleLabel::getArticleId, articleId)
+                .select(ArticleLabel::getTagId)
+                .list();
+        return list.stream().map(ArticleLabel::getTagId).collect(Collectors.toList());
     }
 }

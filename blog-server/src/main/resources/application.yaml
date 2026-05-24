@@ -19,6 +19,10 @@ spring:
     username: ${sky.datasource.username}
     password: ${sky.datasource.password}
 
+  elasticsearch:
+    uris: http://localhost:9200
+    connection-timeout: 10s
+
   mail:
     host: smtp.qq.com
     username: ${spring.mail.password}

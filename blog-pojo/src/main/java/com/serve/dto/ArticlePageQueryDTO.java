@@ -14,6 +14,8 @@ public class ArticlePageQueryDTO {
 
     private boolean querySelf;
 
+    private boolean isQueryStatus;
+
     private Integer categoryId;
 
     private LocalDateTime createTime;

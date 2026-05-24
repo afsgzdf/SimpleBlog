@@ -8,6 +8,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
+import java.util.List;
+
 @Data
 public class ArticleDTO {
 
@@ -27,6 +29,10 @@ public class ArticleDTO {
 
     @Schema(description = "文章分类id")
     private Integer categoryId;
+
+    @Schema(description = "文章标签id")
+    private List<Long> tagIds;
+
     @Schema(description = "作者id")
     private Long userId;
 

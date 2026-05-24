@@ -9,4 +9,6 @@ import java.util.List;
 public interface ArticleLabelService extends IService<ArticleLabel> {
 
     List<Label> queryLabelByArticleId(Long articleId);
+
+    List<Long> queryLabelIdByArticleId(Long articleId);
 }

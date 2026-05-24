@@ -10,6 +10,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RequestAIDTO implements Serializable {
-    private String modelID;
+    private Boolean deepThinking;
     private String message;
 }

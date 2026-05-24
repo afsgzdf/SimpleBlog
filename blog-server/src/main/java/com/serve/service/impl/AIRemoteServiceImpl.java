@@ -39,6 +39,8 @@ public class AIRemoteServiceImpl implements AIRemoteService {
     private static final String CHAT_KEY_PREFIX = "chat:history:";
     private static final int MAX_HISTORY_ROUND = 5;
 
+    private boolean reasoningEnded = false;
+
     @Override
     public void remoteRequestAIStream(RequestAIDTO requestAIDTO, Consumer<String> consumer)
             throws Exception {
@@ -51,7 +53,7 @@ public class AIRemoteServiceImpl implements AIRemoteService {
         // 1. 读取模板
         JsonNode jsonNode = jsonTemplateConfig.getJsonNode();
         // 2. 解析并修改 message 下的 content & role
-        buildRequestBody(jsonNode, AIChatMessages);
+        buildRequestBody(jsonNode, AIChatMessages, requestAIDTO.getDeepThinking());
 
         //3. 转成最终要发送的 JSON
         String value = objectMapper.writeValueAsString(jsonNode);
@@ -77,10 +79,31 @@ public class AIRemoteServiceImpl implements AIRemoteService {
 
                 try {
                     ObjectMapper objectMapper = new ObjectMapper();
+
+                    String reasoningContent = objectMapper.readTree(data)
+                            .at("/choices/0/delta/reasoning_content")
+                            .asText();
+
+                    if (!reasoningContent.isEmpty() && !reasoningContent.equals("null")) {
+                        aiReply.append(reasoningContent);
+                        consumer.accept(reasoningContent);
+                    }
+                }catch (Exception e) {
+                    log.error("解析事件失败: {}", e.getMessage());
+                    consumer.accept("文本返回失败!");
+                }
+
+                try {
+                    ObjectMapper objectMapper = new ObjectMapper();
+
                     String content = objectMapper.readTree(data)
                             .at("/choices/0/delta/content")
                             .asText();
-                    if (!content.isEmpty()) {
+                    if (!content.isEmpty() && !content.equals("null")) {
+                        if (!reasoningEnded) {
+                            consumer.accept("[PART_DONE]");
+                            reasoningEnded = true;
+                        }
                         aiReply.append(content);
                         consumer.accept(content);
                     }
@@ -89,6 +112,8 @@ public class AIRemoteServiceImpl implements AIRemoteService {
                     consumer.accept("文本返回失败!");
                 }
             }
+            reasoningEnded = false;
+            
             //更新用户的对话历史（追加当前对话）
             updateHistoryMessage(AIChatMessages, aiReply.toString(), key);
         } catch (Exception e) {
@@ -126,11 +151,17 @@ public class AIRemoteServiceImpl implements AIRemoteService {
         return history;
     }
 
-    private void buildRequestBody(JsonNode jsonNode, List<AIChatMessage> AIChatMessages) {
+    private void buildRequestBody(JsonNode jsonNode, List<AIChatMessage> AIChatMessages, Boolean deepThinking) {
         ObjectNode messageNode = (ObjectNode) jsonNode;
         if (messageNode == null || messageNode.isArray() || messageNode.size() == 0) {
             throw new RuntimeException("JSON 模板格式错误，实际类型为数组或为空");
         }
+
+        if (deepThinking) {
+            ObjectNode thinking = (ObjectNode) messageNode.get("thinking");
+            thinking.put("type", "enabled");
+        }
+
         JsonNode oldMessage = messageNode.get("messages");
         ArrayNode newMessages = objectMapper.createArrayNode();
         if (oldMessage == null) {

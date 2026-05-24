@@ -7,11 +7,11 @@
         select article.*, category.name as categoryName
         from blog.article left outer join blog.category on article.category_id = category.id
         <where>
-            status = 1
+            <if test="article.status != null">and status = #{article.status}</if>
             <if test="article.title != null">and title like concat('%', #{article.title}, '%')</if>
             <if test="article.categoryId != null">and category_id = #{article.categoryId}</if>
             <if test="article.userId != null">and user_id = #{article.userId}</if>
-            <if test="article.createTime != null">and create_time = #{article.createTime}</if>
+            <if test="article.createTime != null">and article.create_time = #{article.createTime}</if>
         </where>
     </select>
 </mapper>

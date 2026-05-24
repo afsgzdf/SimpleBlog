@@ -55,6 +55,12 @@ public class Article implements Serializable {
     @Schema(description = "文章状态")
     private Integer status;
 
+    @Schema(description = "阅读量")
+    private Integer viewCount;
+
+    @Schema(description = "点赞数")
+    private Integer likeCount;
+
     /**
      * 乐观锁版本号
      */
